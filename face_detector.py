@@ -10,10 +10,10 @@ def show_image(img):
 def detect_face(img, gray_img):
 	face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 
-	faces = face_cascade.detectMultiScale(gray_img, 1.3,5)
+	faces = face_cascade.detectMultiScale(gray_img, 1.05,5)
 	for (x,y,w,h) in faces:
 		print("face detected")
-		face = cv2.rectangle(img, (x,y), (x+w,y+h),(255,0,0),10)
+		face = cv2.rectangle(img, (x,y), (x+w,y+h),(255,0,0),2)
 	show_image(img);
 
 
