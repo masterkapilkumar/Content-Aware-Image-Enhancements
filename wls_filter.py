@@ -1,5 +1,6 @@
 import cv2
 import numpy
+import sys
 from scipy.sparse import spdiags
 from scipy.sparse.linalg import spsolve
 import matplotlib.pyplot as plt
@@ -7,7 +8,7 @@ import matplotlib.pyplot as plt
 IMG_DIR = ''
 
 
-def wlsfilter(image_orig, lambda_=0.4, alpha=1.2, small_eps=1e-4):
+def wlsfilter_layer(image_orig, lambda_=0.4, alpha=1.2, small_eps=1e-4):
     """
     ARGs:
     -----
@@ -52,7 +53,7 @@ def wlsfilter(image):
     image_LAB = cv2.cvtColor(image, cv2.COLOR_BGR2LAB)
 
     image_lumi = image_LAB[...,0]
-    out, detail = wlsfilter(image_lumi, lambda_, alpha)
+    out, detail = wlsfilter_layer(image_lumi, lambda_, alpha)
  
     image_base = numpy.zeros(image.shape)
 
@@ -72,11 +73,14 @@ def wlsfilter(image):
     image_RGB = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     image_base_RGB = cv2.cvtColor(image_base, cv2.COLOR_LAB2RGB)
     image_detail_RGB = cv2.cvtColor(image_detail, cv2.COLOR_LAB2RGB)
+
+    return (image_base_RGB,image_detail_RGB)
+
+if __name__ == '__main__':
+    img = cv2.imread(sys.argv[1])
+    image_base_RGB, image_detail_RGB = wlsfilter(img)
+    image_RGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     plt.imshow(numpy.hstack(
         [image_RGB, image_base_RGB, image_detail_RGB]
     ), cmap='jet')
     plt.show()   
-    return (image_base_RGB,image_detail_RGB)
-
-#if __name__ == '__main__':
-#    test_luminance()
