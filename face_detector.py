@@ -8,17 +8,17 @@ def show_image(img):
 	cv2.destroyAllWindows()
 
 
-def detect_face(gray_img):
+def detect_face(img):
+	gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 	face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
-	faces = face_cascade.detectMultiScale(gray_img, 1.05, 5)
+	faces = face_cascade.detectMultiScale(gray_img, 1.2, 5)
 	
 	return faces
 	
 	
 if __name__=='__main__':
-	img = cv2.imread(sys.argv[1])		
-	gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-	faces = detect_face(gray_img)
+	img = cv2.imread(sys.argv[1])
+	faces = detect_face(img)
 
 	for (x,y,w,h) in faces:
 		print("face detected")
