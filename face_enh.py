@@ -53,13 +53,20 @@ def detect_bimodal(H):
 				is_bimodal[i] = True
 		elif(len(maximas_Fs[i]) > 2):
 			print 'More than two maximas found in face', (i+1)
-			is_bimodal[i] = None
+			# print(maximas_Fs[i])
+			# print(minimas_Fs[i])
+			d,b,m = maximas_Fs[i][0], maximas_Fs[i][-1], minimas_Fs[i][1]
+			print(d,b,m)
+			B[i], M[i], D[i] = b, m, d
+			is_bimodal[i] = True
 		elif(len(minimas_Fs[i]) > 1):
 			print 'More than one minima found in face', (i+1)
 			is_bimodal[i] = None
 		else:
 			print('face '+str(i+1)+' is not bimodal')
-	
+		plt.plot(hist)
+		plt.xlim([1,256])
+		plt.show()
 	return is_bimodal, D, M, B
 
 def sidelight_correction(orig_img, base_img, H, S, faces_rect):
@@ -86,8 +93,8 @@ def sidelight_correction(orig_img, base_img, H, S, faces_rect):
 	
 	print "Sidelight correction done"
 	print
-	
-	return (A * base_img_scaled)
+	out = (A * base_img_scaled)
+	return out
 
 
 def exposure_correction(base_img, base_img_sidlit_corrected, skin_masks, faces_rect):
@@ -191,17 +198,21 @@ def face_enhance(img):
 	print
 	
 	out_temp = sidelight_correction(LAB_Image[..., 0], base, H, S, faces_rect)
-	out_base = exposure_correction(base, out_temp, skin_masks, faces_rect)
 	
+	out_base = exposure_correction(base, out_temp, skin_masks, faces_rect)
+
 	LAB_Image[..., 0] = np.rint(out_base + 255.0 * detail).clip(info.min, info.max).astype(np.uint8)
 	
-	return cv2.cvtColor(LAB_Image, cv2.COLOR_LAB2BGR)
+	outt = cv2.cvtColor(LAB_Image, cv2.COLOR_LAB2BGR)
+	
+	return outt
 
 
 
 if __name__=='__main__':
 	I_origin = cv2.imread(sys.argv[1])
 	I_res = face_enhance(I_origin)
+	cv2.imwrite("11.jpg",I_res)
 	print "\nShowing enhanced image..."
 	plt.imshow(cv2.cvtColor(np.hstack([I_origin, I_res]), cv2.COLOR_BGR2RGB))
 	plt.title("Enhanced image")
